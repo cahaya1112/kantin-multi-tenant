@@ -19,9 +19,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     public bool $remember = false;
 
-    /**
-     * Handle an incoming authentication request.
-     */
     public function login(): void
     {
         $this->validate();
@@ -42,9 +39,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
     }
 
-    /**
-     * Ensure the authentication request is not rate limited.
-     */
     protected function ensureIsNotRateLimited(): void
     {
         if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
@@ -63,54 +57,101 @@ new #[Layout('components.layouts.auth')] class extends Component {
         ]);
     }
 
-    /**
-     * Get the authentication rate limiting throttle key.
-     */
     protected function throttleKey(): string
     {
         return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
     }
 }; ?>
 
-<div class="flex flex-col gap-6">
-    <x-auth-header title="Log in to your account" description="Enter your email and password below to log in" />
+<!-- Trik CSS untuk membobol container parent auth layout -->
+<div class="fixed inset-0 z-50 min-h-screen w-screen flex flex-col md:flex-row bg-gray-100 overflow-y-auto">
+    <!-- Left Branding Section (Red Side) -->
+    <div class="w-full md:w-5/12 bg-[#E52B1E] text-white p-8 md:p-12 flex flex-col justify-between">
+        <div>
+            <!-- Header / Logo -->
+            <div class="flex items-center space-x-2 font-bold text-xl tracking-wider uppercase mb-12">
+                <span class="inline-block w-4 h-4 bg-white"></span>
+                <span>Kantin Teknik</span>
+            </div>
 
-    <!-- Session Status -->
-    <x-auth-session-status class="text-center" :status="session('status')" />
-
-    <form wire:submit="login" class="flex flex-col gap-6">
-        <!-- Email Address -->
-        <flux:input wire:model="email" label="{{ __('Email address') }}" type="email" name="email" required autofocus autocomplete="email" placeholder="email@example.com" />
-
-        <!-- Password -->
-        <div class="relative">
-            <flux:input
-                wire:model="password"
-                label="{{ __('Password') }}"
-                type="password"
-                name="password"
-                required
-                autocomplete="current-password"
-                placeholder="Password"
-            />
-
-            @if (Route::has('password.request'))
-                <x-text-link class="absolute right-0 top-0" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </x-text-link>
-            @endif
+            <!-- Headline -->
+            <h1 class="text-3xl md:text-5xl font-black leading-tight mb-6">
+                Satu kantin.<br>
+                Banyak dapur.<br>
+                Satu sistem.
+            </h1>
+            <p class="text-sm opacity-90">
+                Portal tenant & pengelola — Universitas Nusantara
+            </p>
         </div>
 
-        <!-- Remember Me -->
-        <flux:checkbox wire:model="remember" label="{{ __('Remember me') }}" />
-
-        <div class="flex items-center justify-end">
-            <flux:button variant="primary" type="submit" class="w-full">{{ __('Log in') }}</flux:button>
+        <!-- Badges Footer -->
+        <div class="mt-8 md:mt-12 text-xs font-semibold tracking-widest text-white/80">
+            MULTI-TENANT • QRIS • REAL-TIME
         </div>
-    </form>
+    </div>
 
-    <div class="space-x-1 text-center text-sm text-zinc-600 dark:text-zinc-400">
-        Don't have an account?
-        <x-text-link href="{{ route('register') }}">Sign up</x-text-link>
+    <!-- Right Form Section (White Side) -->
+    <div class="w-full md:w-7/12 bg-gray-50 p-8 md:p-16 flex items-center justify-center">
+        <div class="w-full max-w-md space-y-6">
+            <div>
+                <h2 class="text-3xl font-bold text-gray-900">Masuk</h2>
+                <p class="text-sm text-gray-600 mt-1">Gunakan akun tenant atau pengelola Anda.</p>
+            </div>
+
+            <!-- Session Status -->
+            <x-auth-session-status class="text-center" :status="session('status')" />
+
+            <form wire:submit="login" class="space-y-4">
+                <!-- Surel (Email) -->
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700">Surel</label>
+                    <input wire:model="email" id="email" type="email" name="email" required autofocus
+                        class="mt-1 block w-full px-3 py-2 border border-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-600 text-gray-900"
+                        placeholder="[email protected]">
+                    @error('email')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Kata Sandi -->
+                <div x-data="{ show: false }">
+                    <label for="password" class="block text-sm font-medium text-gray-700">Kata sandi</label>
+                    <div class="relative mt-1">
+                        <input :type="show ? 'text' : 'password'" wire:model="password" id="password" name="password" required
+                            class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-red-600 text-gray-900">
+                        <button type="button" @click="show = !show"
+                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-xs text-gray-500 hover:text-gray-700">
+                            <span x-text="show ? 'Sembunyikan' : 'Tampilkan'"></span>
+                        </button>
+                    </div>
+                    @error('password')
+                        <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <!-- Rate Limiting Notice -->
+                <p class="text-xs text-gray-500 leading-relaxed">
+                    5x gagal dalam 10 menit → akun terkunci 15 menit. Sesi berakhir setelah 8 jam tidak aktif.
+                </p>
+
+                <!-- Tombol Masuk -->
+                <div>
+                    <button type="submit"
+                        class="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#E52B1E] hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                        Masuk →
+                    </button>
+                </div>
+
+                <!-- Lupa Kata Sandi -->
+                <div class="text-left pt-2">
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" class="text-sm font-medium text-[#E52B1E] hover:underline">
+                            Lupa kata sandi?
+                        </a>
+                    @endif
+                </div>
+            </form>
+        </div>
     </div>
 </div>

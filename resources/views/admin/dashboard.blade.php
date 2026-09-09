@@ -12,4 +12,4 @@
         </div>
         <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min"></div>
     </div>
-</x-layouts.app>
+</x-layouts.app>php artisan route:list
