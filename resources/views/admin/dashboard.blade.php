@@ -1,15 +1,15 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <h1 class="text-2xl font-bold mb-4 text-gray-800">Admin Dashboard</h1>
-        <p class="text-gray-600">Selamat datang di Dashboard Admin Kantin Multi-Tenant!</p>
+<x-layouts.app>
+    <div class="flex h-full w-full flex-1 flex-col gap-4 rounded-xl">
+        <div class="grid auto-rows-min gap-4 md:grid-cols-3">
+            <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold">Admin Dashboard</h3>
+                    <p class="text-sm text-neutral-500">Selamat datang di Dashboard Admin Kantin Multi-Tenant!</p>
+                </div>
+            </div>
+            <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"></div>
+            <div class="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border"></div>
+        </div>
+        <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min"></div>
     </div>
-</body>
-</html>
+</x-layouts.app>
