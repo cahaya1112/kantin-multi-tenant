@@ -15,12 +15,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
 
         then: function (): void {
+            // Rute Customer (Publik)
+            Route::middleware('web')
+                ->prefix('kantin/{canteen}')
+                ->name('customer.')
+                ->group(base_path('routes/customer.php'));
+
+            // Rute Admin
             Route::middleware(['web', 'auth', 'verified', 'role:admin'])
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
 
-            // TAMBAHKAN BAGIAN INI UNTUK DAFTARKAN RUTE TENANT:
+            // Rute Tenant
             Route::middleware(['web', 'auth', 'verified'])
                 ->prefix('tenant/{tenant:slug}')
                 ->name('tenant.')
