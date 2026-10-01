@@ -19,6 +19,12 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->prefix('admin')
                 ->name('admin.')
                 ->group(base_path('routes/admin.php'));
+
+            // TAMBAHKAN BAGIAN INI UNTUK DAFTARKAN RUTE TENANT:
+            Route::middleware(['web', 'auth', 'verified'])
+                ->prefix('tenant/{tenant:slug}')
+                ->name('tenant.')
+                ->group(base_path('routes/tenant.php'));
         },
     )
     ->withMiddleware(function (Middleware $middleware): void {
